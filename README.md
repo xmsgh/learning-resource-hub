@@ -28,8 +28,8 @@ I use this space to collect:
 ### 1. Linux
 | Resource Name | Link | Type | Why I Saved It | Status |
 |---|---|---|---|---|
-| Example | [example-link](#) | Notes / Tutorial | Good for Linux basics | To Study |
 
+| BobAnkh | [linux常用命令]（https://github.com/BobAnkh/LinuxBeginner/tree/master）｜ notes/Tutorial ｜方便快速查找命令并学习使用方法
 ---
 
 ### 2. Networking
