@@ -29,7 +29,9 @@ I use this space to collect:
 | Resource Name | Link | Type | Why I Saved It | Status |
 |---|---|---|---|---|
 | 资源名字 | [GitHub Repo](链接) | 资源类型 | 我为什么收藏它 | 当前状态 |（格式模板）
-| BobAnkh | [linux常用命令]（https://github.com/BobAnkh/LinuxBeginner/tree/master）｜ notes/Tutorial ｜方便快速查找命令并学习使用方法
+
+| BobAnkh | [linux常用命令](https://github.com/BobAnkh/LinuxBeginner/tree/master) | notes/Tutorial | 方便快速查找命令并学习使用方法 | 待学习/To be learned |
+
 ---
 
 ### 2. Networking
