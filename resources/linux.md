@@ -17,8 +17,7 @@ This page collects Linux-related learning resources, notes, and useful repositor
 
 ---
 
-## What I Have Learned
-我学到了什么
+## What I Have Learned 我学到了什么
 - 
 - 
 - 
