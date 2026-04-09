@@ -18,10 +18,10 @@ This page collects Linux-related learning resources, notes, and useful repositor
 ---
 
 ## What I Have Learned
-
-- Linux is a core skill for infrastructure, cloud, and operations roles
-- Basic command learning is the starting point for later server work
-- GitHub can be used to organize technical learning resources
+我学到了什么
+- 
+- 
+- 
   
 ## My Current Linux Focus
 
