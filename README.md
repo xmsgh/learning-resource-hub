@@ -18,7 +18,7 @@ I use this space to collect:
 - [Python](resources/python.md)
 - [AWS](resoueces/aws.md)
 - [Infrastructure](resources/infrastructure.md)
-- - Shell
+- Shell
 - Automation
 
 ---
