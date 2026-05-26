@@ -23,7 +23,28 @@ This page collects Linux-related learning resources, notes, and useful repositor
 尝试使用 sudo passwd -S root命令检查，发现：账号状态被锁定。<img width="247" height="46" alt="image" src="https://github.com/user-attachments/assets/f0a5592f-3586-4e7c-af8b-7cda12c5b1fd" />执行 sudo passwd root 重新设置密码解锁后，就能正常切换到root用户。
 2026.5.21记录：此前使用的是ubuntu系统，在使用过程中没有出现过普通用户无法使用sudo命令的情况，最近安装了Rocky系统的简易版本，一些命令是没有自带的，需要自行安装，且第一次遇到普通用户无法执行sudo命令，没有这个权限，提示：mg(用户) is not in the sudoersfile.This incident will be reported.进入root用户层级，执行sermod -aG wheel mg 操作，成功后退回普通用户，重新登录meng用户就可以正常使用sudo了。
 2026.5.21记录：记录一个在使用tar压缩命令时的误操作。我使用tar -zcvf test.gz /home/mg/test 命令压缩文件，由于写了绝对路径，导致整个路径的文件都被压缩到了test.gz压缩包中，在解压是时我才发现这个问题。以后一定要随时记住，压缩文件时先cd进入目标路径，然后在此路径下执行tar操作，要使用相对路径。避免误操作。
-
+2026.5.26项目案例一：编写发送邮件自动化执行脚本，在需要重复操作编写邮件发送任务中提高效率。经过不断试验，最终成功运行并发送邮件到目标邮箱。具体代码如下：
+#!/bin/bash
+#FileName:mail.sh
+#Version2.0
+#Date:2026-5-26
+#Author:mg
+#Descripition:the scrip for smtp configrationfor smtp configration
+read -p "请输入邮箱服务商(163/189/126/qq…):" provider
+read -p "请输入邮箱账号:" account
+read -p "请输入邮箱授权码:" password
+echo "正在配置，请稍等…"
+dnf install -y s-nail postfix > /dev/null
+cat >> /etc/.mailrc << EOF
+set v15-compat=yes
+set mta=smtps://${account}%40${provider}.com:${password}@smtp.${provider}.com:465
+set from=${account}@${provider}.com
+set ssl-verify=ignore
+EOF
+systemctl start postfix
+#一开始编写的1.0版本使用的是v14版本的smtp，适用于Centos7以下的系统，现在的Rocky需要使用v15版本的命令，否则发送邮件的时候会一直弹出警告。多次测试一直无法成功发送邮件，询问AI，建议使用v15版本适配的命令格式，所以改成2.0版本（即当前版本）后运行成功。在40行中的%40是@的URL转义，因为URL中@有特殊含义（用于分隔用户名和主机），必须转义，不然会一直报错。
+另外需要再次自省，在敲命令的时候一定要认真再认真，一开始把from写成了form，一直没发现，因为 form 不是有效的配置项，s-nail 没有设置发件人地址，导致发送时使用了系统默认的发件人（如 root@localhost），与认证用户不匹配，SMTP服务器拒绝了请求。
+这只是个小的项目演示，只是完成了可以通过一条命令自动发送邮件的功能。思考：在实际网络管理维护中，加入管道符等筛选过滤命令，可以将日志中的警告、错误等信息打包编写成邮件内容定时发送到目标邮箱，是否也可以作为远程实时监测的一种手段。
 
 
 - 
