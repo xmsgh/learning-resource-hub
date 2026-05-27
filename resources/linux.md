@@ -46,6 +46,22 @@ systemctl start postfix
 另外需要再次自省，在敲命令的时候一定要认真再认真，一开始把from写成了form，一直没发现，因为 form 不是有效的配置项，s-nail 没有设置发件人地址，导致发送时使用了系统默认的发件人（如 root@localhost），与认证用户不匹配，SMTP服务器拒绝了请求。
 这只是个小的项目演示，只是完成了可以通过一条命令自动发送邮件的功能。思考：在实际网络管理维护中，加入管道符等筛选过滤命令，可以将日志中的警告、错误等信息打包编写成邮件内容定时发送到目标邮箱，是否也可以作为远程实时监测的一种手段。
 
+2026.5.27实战项目二：自动备份数据库，下载日志。实现在特定时间自动备份数据库，将数据库的备份文件进行压缩。并且压缩包用当前日期命名，再把压缩包拷贝到nfs文件共享服务器一份，然后删除本地备份的30天前的所有老文件，nfs共享存储里不删。执行完后，记录下日志。具体代码如下：
+#!/bin/bash
+#FileName:sql_backup.sh
+#Version:1.0
+#Date:2026-5-26
+#Author:mg
+#Description:the script for backup mysql of opencart
+time=$(date +"%y-%m-%d %H:%M")
+mysqldump -uroot -p ******* oc202605 > backup/opencart.sql 2>/dev/null
+tar -zcf backup/yasuo-$time.tar.gz backup/opencart.sql --remove-files 2>/dev/null
+rsync backup/* /mnt/nfs_share
+find backup/* -mtime +30 | xargs rm -rf
+echo "well done!备份时间为$time" >> backup.log
+这个案例需要使用到mysql数据库。下载安装办法不赘述，使用到的命令工具也很简单。*******是登录mysql的密码。oc202605是在mysql创建的数据路名称。
+创建文件并写入如上代码，保存后退出，执行./sql_backup.sh脚本便可。
+随后可用cat命令查看backup.log的内容，会有压缩成功的提示。backup目录下会多了以yasuo-具体时间命名的压缩包。
 
 - 
 - 
