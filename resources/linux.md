@@ -62,7 +62,27 @@ echo "well done!备份时间为$time" >> backup.log
 这个案例需要使用到mysql数据库。下载安装办法不赘述，使用到的命令工具也很简单。*******是登录mysql的密码。oc202605是在mysql创建的数据路名称。
 创建文件并写入如上代码，保存后退出，执行./sql_backup.sh脚本便可。
 随后可用cat命令查看backup.log的内容，会有压缩成功的提示。backup目录下会多了以yasuo-具体时间命名的压缩包。
-
+2026.5.28实战项目三：带条件判断自动化监测nginx等应用是否有异常，若有异常，则自动重启服务。
+nginx运行在服务器上，负责接收和处理来自互联网用户的请求,反向代理，保护后段安全。在日常生产活动中有很重要的作用，所以监测nginx运行状况非常有必要。具体代码如下：
+#!/bin/bash
+#FileName:nginx_error.sh
+#Version:1.2
+#Date:2026-5-27
+#Author:mg
+while true
+do
+        if ! netstat -nltp | grep 80 > /dev/null
+        then
+                echo "$(date +%Y年%m月%d日%H时%M分%S秒) - Nginx 停止运行，正在重启……" | tee -a /shell/log/nginx_error.log
+                systemctl start nginx
+        else
+                echo "$(date +%Y年%m月%d日%H时%M分%S秒) -Nginx 正常运行" | tee -a /shell/log/nginx_normal.log
+        fi
+        sleep 3
+done
+编写完成后保存退出，先关nginx，然后执行脚本文件，结果如图所示：
+<img width="461" height="122" alt="截屏2026-05-28 18 08 40" src="https://github.com/user-attachments/assets/b8fd4dd6-1bfc-430a-8e54-83d531d00597" />
+脚本运行成功。思考：在实际生产环境中，如何实现脚本实时运行监测同时还能完成其他操作？
 - 
 - 
   
