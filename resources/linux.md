@@ -83,9 +83,22 @@ done
 编写完成后保存退出，先关nginx，然后执行脚本文件，结果如图所示：
 <img width="461" height="122" alt="截屏2026-05-28 18 08 40" src="https://github.com/user-attachments/assets/b8fd4dd6-1bfc-430a-8e54-83d531d00597" />
 脚本运行成功。思考：在实际生产环境中，如何实现脚本实时运行监测同时还能完成其他操作？
-- 
-- 
-  
+- 2026.5.30实战项目四:自动监测web，每小时检查访问日志，如果出现恶意访问IP（设定为每小时访问次数超过一万），则自动提取出恶意IP及访问次数，通过邮件通知管理员。
+- 具体代码如下:
+Server=$(cat /etc/hostname)
+More_Nums=$(awk '{print $1}' /var/log/nginx/access.log | sort -n | uniq -c | sort -rn | head -1 | awk '{print $1}')
+#获取最大访问次数.
+Attack_ip=$(awk '{print $1}' /var/log/nginx/access.log | sort -n | uniq -c | sort -rn |head -1 | awk '{print $2}')
+#获取最大访问次数对应的IP.
+echo -e "\n$(date +'%m月%d日-%H时%M分')最大链接次数：${More_Nums},访问IP：${Attack_ip}" >> /home/meng/shell/log/anti_dos.log
+export LANG=en_US.UTF-8
+为了解决 s-nail 发送中文邮件时的编码报错问题，在发送邮件前设置好编码环境。
+if [ ${More_Nums} -gt 10000 ]
+#-gt是数学中的大于号 >,判断左边是否大于右边.
+then
+        echo "警告，服务器${Server}遭受攻击，连接次数达${More_Nums}次，攻击地址为${Attack_ip}" | s-nail -s '服务器遭受dos攻击警告' 490152939@qq.com
+fi
+- 这个脚本要能正常运行,得先跑通实战一的自动发送邮件脚本,还有一个很重要的点,得分清楚存放邮件信息的文件夹位置,若自动发送邮件的脚本设置的存储位置在当前用户,再使用root用户执行这个脚本时也会出错,因为root用户会自动查询当前用户下的存放位置,没有找到内容,便无法响应成功,解决办法是,可以把普通用户存放邮箱信息的文件复制一份到root用户下,再次执行便能执行成功了.
 ## My Current Linux Focus
 
 - Linux basic commands
