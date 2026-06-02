@@ -45,63 +45,63 @@ This page collects Linux-related learning resources, notes, and useful repositor
 - set ssl-verify=ignore
 - EOF
 - systemctl start postfix
-一开始编写的1.0版本使用的是v14版本的smtp，适用于Centos7以下的系统，现在的Rocky需要使用v15版本的命令，否则发送邮件的时候会一直弹出警告。多次测试一直无法成功发送邮件，询问AI，建议使用v15版本适配的命令格式，所以改成2.0版本（即当前版本）后运行成功。在40行中的%40是@的URL转义，因为URL中@有特殊含义（用于分隔用户名和主机），必须转义，不然会一直报错。
+- 一开始编写的1.0版本使用的是v14版本的smtp，适用于Centos7以下的系统，现在的Rocky需要使用v15版本的命令，否则发送邮件的时候会一直弹出警告。多次测试一直无法成功发送邮件，询问AI，建议使用v15版本适配的命令格式，所以改成2.0版本（即当前版本）后运行成功。在40行中的%40是@的URL转义，因为URL中@有特殊含义（用于分隔用户名和主机），必须转义，不然会一直报错。
 另外需要再次自省，在敲命令的时候一定要认真再认真，一开始把from写成了form，一直没发现，因为 form 不是有效的配置项，s-nail 没有设置发件人地址，导致发送时使用了系统默认的发件人（如 root@localhost），与认证用户不匹配，SMTP服务器拒绝了请求。
 这只是个小的项目演示，只是完成了可以通过一条命令自动发送邮件的功能。思考：在实际网络管理维护中，加入管道符等筛选过滤命令，可以将日志中的警告、错误等信息打包编写成邮件内容定时发送到目标邮箱，是否也可以作为远程实时监测的一种手段。
 
 2026.5.27实战项目二：自动备份数据库，下载日志。实现在特定时间自动备份数据库，将数据库的备份文件进行压缩。并且压缩包用当前日期命名，再把压缩包拷贝到nfs文件共享服务器一份，然后删除本地备份的30天前的所有老文件，nfs共享存储里不删。执行完后，记录下日志。具体代码如下：
-#!/bin/bash
-#FileName:sql_backup.sh
-#Version:1.0
-#Date:2026-5-26
-#Author:mg
-#Description:the script for backup mysql of opencart
-time=$(date +"%y-%m-%d %H:%M")
-mysqldump -uroot -p ******* oc202605 > backup/opencart.sql 2>/dev/null
-tar -zcf backup/yasuo-$time.tar.gz backup/opencart.sql --remove-files 2>/dev/null
-rsync backup/* /mnt/nfs_share
-find backup/* -mtime +30 | xargs rm -rf
-echo "well done!备份时间为$time" >> backup.log
-这个案例需要使用到mysql数据库。下载安装办法不赘述，使用到的命令工具也很简单。*******是登录mysql的密码。oc202605是在mysql创建的数据路名称。
+- #!/bin/bash
+- #FileName:sql_backup.sh
+- #Version:1.0
+- #Date:2026-5-26
+- #Author:mg
+- #Description:the script for backup mysql of opencart
+- time=$(date +"%y-%m-%d %H:%M")
+- mysqldump -uroot -p ******* oc202605 > backup/opencart.sql 2>/dev/null
+- tar -zcf backup/yasuo-$time.tar.gz backup/opencart.sql --remove-files 2>/dev/null
+- rsync backup/* /mnt/nfs_share
+- find backup/* -mtime +30 | xargs rm -rf
+- echo "well done!备份时间为$time" >> backup.log
+- 这个案例需要使用到mysql数据库。下载安装办法不赘述，使用到的命令工具也很简单。*******是登录mysql的密码。oc202605是在mysql创建的数据路名称。
 创建文件并写入如上代码，保存后退出，执行./sql_backup.sh脚本便可。
 随后可用cat命令查看backup.log的内容，会有压缩成功的提示。backup目录下会多了以yasuo-具体时间命名的压缩包。
 
 2026.5.28实战项目三：带条件判断自动化监测nginx等应用是否有异常，若有异常，则自动重启服务。
 nginx运行在服务器上，负责接收和处理来自互联网用户的请求,反向代理，保护后段安全。在日常生产活动中有很重要的作用，所以监测nginx运行状况非常有必要。具体代码如下：
-#!/bin/bash
-#FileName:nginx_error.sh
-#Version:1.2
-#Date:2026-5-27
-#Author:mg
-while true
-do
-        if ! netstat -nltp | grep 80 > /dev/null
-        then
-                echo "$(date +%Y年%m月%d日%H时%M分%S秒) - Nginx 停止运行，正在重启……" | tee -a /shell/log/nginx_error.log
-                systemctl start nginx
-        else
-                echo "$(date +%Y年%m月%d日%H时%M分%S秒) -Nginx 正常运行" | tee -a /shell/log/nginx_normal.log
-        fi
-        sleep 3
-done
-编写完成后保存退出，先关nginx，然后执行脚本文件，结果如图所示：
+- #!/bin/bash
+- #FileName:nginx_error.sh
+- #Version:1.2
+- #Date:2026-5-27
+- #Author:mg
+- while true
+- do
+-        if ! netstat -nltp | grep 80 > /dev/null
+-         then
+-                 echo "$(date +%Y年%m月%d日%H时%M分%S秒) - Nginx 停止运行，正在重启……" | tee -a /shell/log/nginx_error.log
+-                 systemctl start nginx
+-         else
+-                 echo "$(date +%Y年%m月%d日%H时%M分%S秒) -Nginx 正常运行" | tee -a /shell/log/nginx_normal.log
+-         fi
+-         sleep 3
+- done
+- 编写完成后保存退出，先关nginx，然后执行脚本文件，结果如图所示：
 <img width="461" height="122" alt="截屏2026-05-28 18 08 40" src="https://github.com/user-attachments/assets/b8fd4dd6-1bfc-430a-8e54-83d531d00597" />
 脚本运行成功。思考：在实际生产环境中，如何实现脚本实时运行监测同时还能完成其他操作？
 
 2026.5.30实战项目四:自动监测web，每小时检查访问日志，如果出现恶意访问IP（设定为每小时访问次数超过一万），则自动提取出恶意IP及访问次数，通过邮件通知管理员。具体代码如下:
-Server=$(cat /etc/hostname)
-More_Nums=$(awk '{print $1}' /var/log/nginx/access.log | sort -n | uniq -c | sort -rn | head -1 | awk '{print $1}')
-#获取最大访问次数.
-Attack_ip=$(awk '{print $1}' /var/log/nginx/access.log | sort -n | uniq -c | sort -rn |head -1 | awk '{print $2}')
-#获取最大访问次数对应的IP.
-echo -e "\n$(date +'%m月%d日-%H时%M分')最大链接次数：${More_Nums},访问IP：${Attack_ip}" >> /home/meng/shell/log/anti_dos.log
-export LANG=en_US.UTF-8
-为了解决 s-nail 发送中文邮件时的编码报错问题，在发送邮件前设置好编码环境。
-if [ ${More_Nums} -gt 10000 ]
-#-gt是数学中的大于号 >,判断左边是否大于右边.
-then
-        echo "警告，服务器${Server}遭受攻击，连接次数达${More_Nums}次，攻击地址为${Attack_ip}" | s-nail -s '服务器遭受dos攻击警告' 490152939@qq.com
-fi
+- Server=$(cat /etc/hostname)
+- More_Nums=$(awk '{print $1}' /var/log/nginx/access.log | sort -n | uniq -c | sort -rn | head -1 | awk '{print $1}')
+- #获取最大访问次数.
+- Attack_ip=$(awk '{print $1}' /var/log/nginx/access.log | sort -n | uniq -c | sort -rn |head -1 | awk '{print $2}')
+- #获取最大访问次数对应的IP.
+- echo -e "\n$(date +'%m月%d日-%H时%M分')最大链接次数：${More_Nums},访问IP：${Attack_ip}" >> /home/meng/shell/log/anti_dos.log
+- export LANG=en_US.UTF-8
+- #为了解决 s-nail 发送中文邮件时的编码报错问题，在发送邮件前设置好编码环境。
+- if [ ${More_Nums} -gt 10000 ]
+- #-gt是数学中的大于号 >,判断左边是否大于右边.
+- then
+-         echo "警告，服务器${Server}遭受攻击，连接次数达${More_Nums}次，攻击地址为${Attack_ip}" | s-nail -s '服务器遭受dos攻击警告' 490152939@qq.com
+- fi
 - 这个脚本要能正常运行,得先跑通实战一的自动发送邮件脚本,还有一个很重要的点,得分清楚存放邮件信息的文件夹位置,若自动发送邮件的脚本设置的存储位置在当前用户,再使用root用户执行这个脚本时也会出错,因为root用户会自动查询当前用户下的存放位置,没有找到内容,便无法响应成功,解决办法是,可以把普通用户存放邮箱信息的文件复制一份到root用户下,再次执行便能执行成功了.
 ## My Current Linux Focus
 
