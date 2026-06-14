@@ -111,14 +111,70 @@ nginx运行在服务器上，负责接收和处理来自互联网用户的请求
 - （2）在/usr/share/nginx/html目录下创建新的html文件，如test.html，然后把想要发布的内容粘贴并保存。访问时直接输入：http://服务器IP/test.html就可以实现访问。
 - （3）在/usr/share/nginx/html目录下创一个test/目录，然后在test/目录中创建index.html并写入目标内容。访问时直接输入：http://服务器IP/test/就可以实现访问。
 - （4）修改/etc/nginx/nginx.conf文件的server{}部分内容，增加新的server{}块，用不同端口区分网站。在文件中加入如下内容：
-- # 网站二：8080端口
+- #网站二：8080端口
 - server {
 -     listen 8080;
 -     root /usr/share/nginx/site2;
 - }
 - 这种方法需要在/usr/share/nginx/目录下创建一个新的目录site2/来存放index.html,注意⚠️这个目录和html在同一个层级。这个方法因为修改了nginx的配置，需要重启nginx才能生效。重启后，从浏览器访问时需要加上具体的端口号,输入http://服务器IP:8080可进入网站页面。
 - 要特别注意，在修改或加入任何内容时，都要仔细检查路径是否一致。
-- 
+
+- 2026.6.14 实战项目六，部署nginx动态站点。部署动态站点除了使用到nginx外，还需要mysql、php-fpm。
+- （1）首先要在数据库中创建一个新的数据库文件和新用户并配置相关权限。具体操作如下：
+- mysql -uroot -p 
+- create database Trend_page; 
+- create user  ‘wordmin’@’%’ identified by ‘mima’;
+- #创建一个新的用户wordmin和密码,这个用户允许从任何IP地址登录
+- #%:允许所有IP都可登录数据库进行管理
+- grant all privileges on Trend_page.* to ‘wordmin’@’%’;
+- #给刚才的新用户赋予权限,可以管理Trend_page这个库的所有表项
+- flush privileges;
+- quit
+- （2）创建一个新的配置文件并写入内容：
+- cd /etc/nginx/conf.d
+- vim Trend_page.conf
+- #配置信息如下:
+server {
+    listen 2001;
+    server_name 自己IP地址;
+    root /web/Trend_page;
+
+    location / {
+        index index.php;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}
+- 检查无误后保存退出，重启nginx，检查网络连接状态,若看到2001端口,说明新网站启动成功。
+- （3）修改php配置
+- vim /etc/php-fpm.d/www.conf进入文件
+- /输入listen搜索,n键往下,找到 listen = /run/php-fpm/www.sock位置,在开头输入;让这一行注释掉(不运行)
+- 在下一行输入: listen = 127.0.0.1:9000
+- 保存退出，重启php-fpm，检查网络连接状态,若看到9000端口,说明启动成功。
+- （4）从官网下载wordpress文件
+- 此时在/根目录目录下:
+- mkdir web
+- cd /web
+- wget https://cn.wordpress.org/latest-zh_CN.tar.gz
+- tar -xvf latest-zh_CN.tar.gz
+- mv wordpress Trend_page
+- chmod -R 777 Trend_page
+- #这一步把解压后的目录修改为容易识别区分的名字
+- （5）登录web界面
+- 浏览器输入 http://IP地址:2001
+- 根据页面提示输入创建数据库时的配置信息，设置数据库名、用户名、密码，数据库主机IP，进入后就可以设置自己的站点信息。
+- 若忘记了登录密码，可以在数据库中找回，方法如下：
+- 进入mysql后，use Trend_page;切换到Trend_page数据库
+- select user_login, user_email from wp_users;
+- #查看用户表，找到自己的用户名，这一步会显示有户名和邮箱
+- update wp_users set user_pass=MD5('newpassword') where user_login='你的用户名';
+- 直接修改密码（把newpassword替换为想要的新密码）
+- 设置好后退出mysql，浏览器刷新再次登录就可以使用修改后的密码了。
 ## My Current Linux Focus
 
 - Linux basic commands
