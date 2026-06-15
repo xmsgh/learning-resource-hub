@@ -14,6 +14,7 @@
 - quit
   
 (2)到/etc/nginx/conf.d目录下创建一个新的配置文件并写入[Trend_page.conf](scripts/Trend_page.conf)内容,检查无误后保存退出，重启nginx，检查网络连接状态,若看到2001端口,说明新网站启动成功。
+⚠️Trend_page.conf脚本文件不能直接运行，需要把里面的IP地址换成自己的IP。
 
 (3)修改php配置
 vim /etc/php-fpm.d/www.conf进入文件.
