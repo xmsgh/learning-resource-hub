@@ -6,3 +6,5 @@
 尝试使用 sudo passwd -S root命令检查，发现：账号状态被锁定。<img width="247" height="46" alt="image" src="https://github.com/user-attachments/assets/f0a5592f-3586-4e7c-af8b-7cda12c5b1fd" />执行 sudo passwd root 重新设置密码解锁后，就能正常切换到root用户。
 
 2026.5.21记录：此前使用的是ubuntu系统，在使用过程中没有出现过普通用户无法使用sudo命令的情况，最近安装了Rocky系统的简易版本，一些命令是没有自带的，需要自行安装，且第一次遇到普通用户无法执行sudo命令，没有这个权限，提示：mg(用户) is not in the sudoersfile.This incident will be reported.进入root用户层级，执行sermod -aG wheel mg 操作，成功后退回普通用户，重新登录meng用户就可以正常使用sudo了。
+
+2026.5.21记录：记录一个在使用tar压缩命令时的误操作。我使用tar -zcvf test.gz /home/mg/test 命令压缩文件，由于写了绝对路径，导致整个路径的文件都被压缩到了test.gz压缩包中，在解压是时我才发现这个问题。以后一定要随时记住，压缩文件时先cd进入目标路径，然后在此路径下执行tar操作，要使用相对路径。避免误操作。
