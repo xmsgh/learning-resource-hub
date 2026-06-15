@@ -4,14 +4,18 @@
 （1）直接把/usr/share/nginx/html中原有的index.html文件删除，替换成想要制作的目标文件，并把这个问价改名为index.html。这是测试初期最方便的一个方法，只需需要一个文件就能实现目标内容静态部署。
 
 - 若不想删除默认文件，有三种方法可以实现静态部署：
+  
 （2）在/usr/share/nginx/html目录下创建新的html文件，如test.html，然后把想要发布的内容粘贴并保存。访问时直接输入：http://服务器IP/test.html就可以实现访问。
+
 （3）在/usr/share/nginx/html目录下创一个test/目录，然后在test/目录中创建index.html并写入目标内容。访问时直接输入：http://服务器IP/test/就可以实现访问。
+
 （4）修改/etc/nginx/nginx.conf文件的server{}部分内容，增加新的server{}块，用不同端口区分网站。在文件中加入如下内容：
-#网站二：8080端口
-server {
-    listen 8080;
-    root /usr/share/nginx/site2;
-}
+
+- #网站二：8080端口
+- server {
+-     listen 8080;
+-     root /usr/share/nginx/site2;
+- }
 
 这种方法需要在/usr/share/nginx/目录下创建一个新的目录site2/来存放index.html,注意⚠️这个目录和html在同一个层级。这个方法因为修改了nginx的配置，需要重启nginx才能生效。重启后，从浏览器访问时需要加上具体的端口号,输入http://服务器IP:8080可进入网站页面。
 要特别注意，在修改或加入任何内容时，都要仔细检查路径是否一致。
