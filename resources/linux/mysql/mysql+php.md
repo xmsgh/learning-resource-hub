@@ -15,15 +15,7 @@ PHP+MySQL类网站系统在实际生产环境中应用非常广泛，如社区�
  （1）搭建LNMP环境：安装nginx,mysql,php-fpm，很简单，不赘述。
  
  （2）在mysql手动创建数据库和数据库用户
-- mysql -u root -p    #输入密码进入数据库
-- create database Discuz_Data;    #创建名为Discuz_Data的数据库
-- SHOUW VARIABLES LIKE 'character_set_database';    #查看数据库字符集版本，若使老版本，可手动设置成新版本
-- create database '数据库名称'character set utf8mb4;    #手动设置目标数据库的新版本字符集
-- SHOW DATABASES;    #查看数据库
-- create user 'discuzmod'@'%'identified by '密码';    #创建管理员discuzmod，允许该用户使用密码认证从任意地址登录
-- garan all privileges on Discuz_Data.* to 'Discuzmod'@'%';    #给管理员discuzmod赋予权限，可以管理Discuz_Data这个数据库的所有表项
-- flush privileges;
-- quit
+具体SQL见[]
 
  （3）下载discuz安装包并解压到特定目录
   我记录了两种下载安装到方法，一种是wget命令直接下载，另一种是先下载到本机，再上传到虚拟机系统中。
@@ -43,7 +35,7 @@ PHP+MySQL类网站系统在实际生产环境中应用非常广泛，如社区�
  （4）写nginx配置文件
 - vim /etc/nginx/conf.d/discuz.conf
 
-  进入插入模式，写入discuz.conf[discuz.conf](/scripts/discuz.conf)文件内的配置内容，然后保存退出。或者可以直接把discuz.conf文件下载到/etc/nginx/conf.d/目录下。文件内server_name *.*.*.*; 位置需改成自己IP地址。
+  进入插入模式，写入[discuz.conf](scripts/discuz.conf)文件内的配置内容，然后保存退出。或者可以直接把discuz.conf文件下载到/etc/nginx/conf.d/目录下。文件内server_name *.*.*.*; 位置需改成自己IP地址。
 
  ⚠️因为80端口已经被我在其他网站文件占用，为了不打架，使用了新的8090端口。这个端口此前没有使用过，初次使用会被防火墙拦截，所以需要放行8090端口。
   
