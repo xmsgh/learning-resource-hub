@@ -43,8 +43,9 @@ PHP+MySQL类网站系统在实际生产环境中应用非常广泛，如社区�
   （4）写nginx配置文件
 - vim /etc/nginx/conf.d/discuz.conf
 
-   进入插入模式，写入discuz.conf文件内的配置内容，然后保存退出。或者可以直接把discuz.conf文件下载到/etc/nginx/conf.d/目录下。
+   进入插入模式，写入discuz.conf[discuz.conf](/scripts/discuz.conf)文件内的配置内容，然后保存退出。或者可以直接把discuz.conf文件下载到/etc/nginx/conf.d/目录下。文件内server_name *.*.*.*; 位置需改成自己IP地址。
    ⚠️因为80端口已经被我在其他网站文件占用，为了不打架，使用了新的8090端口。这个端口此前没有使用过，初次使用会被防火墙拦截，所以需要放行8090端口。
+  
    方法如下：
 - firewall-cmd--permanent--add-port=80/tcp
 - firewall-cmd--reload
