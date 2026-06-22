@@ -79,7 +79,7 @@ Hostname 是客户端IP；Server是服务器端IP。⚠️一定不要改错，�
 
 （6）邮件告警配置
 
-在服务器端配置自动部署邮件发送，过程不再赘述，可以参考[mail-auto-config.md](shell/mail-auto-config.md)部分的学习记录。
+在服务器端配置自动部署邮件发送，过程不再赘述，可以参考[mail-auto-config.md](/resources/linux/shell/mail-auto-config.md)部分的学习记录。
 
 自动化部署完成后，到监测网站修改如下内容：
 
