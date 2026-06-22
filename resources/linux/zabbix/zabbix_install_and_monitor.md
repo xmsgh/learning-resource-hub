@@ -6,9 +6,8 @@ zabbix是应用最广泛的IT运维工具之一，主要实现实时监测与告
 在开始前，关闭防火墙和selinux,目的是为了排除干扰，能先确认在操作过程中配置本身是否正确。在实际生产过程中，最好不关闭防火墙，而是精准放行端口，避免暴露。
 
 先准备好以下软件：tar,net-tools,wget,php,php-fpm,php-mysqlnd,nginx,mysql.
-- dnf install -y zabbix-server-mysql zabbix-web-mysql zabbix-nginx-conf zabbix-sql-scripts zabbix-selinux-policy zabbix-agent
 
-由于系统自带的下载器中没有zabbix的安装包，所以需要下载一个新的下载源。
+由于系统自带的下载器中没有zabbix的安装包，所以需要下载一个新的下载源，然后才能下载zabbix类的应用。
 - rpm -Uvh https://repo.zabbix.com/zabbix/7.0/rhel/9/x86_64/zabbix-release-7.0-4.el9.noarch.rpm
 
 以上准备完毕后，开始搭建zabbix.
