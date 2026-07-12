@@ -25,7 +25,7 @@ apt update
 apt install -y docker-ce
 - 因现在国内无法直接访问docker官网镜像仓库，所以需要先配置一个镜像加速器(国内的镜像站，把官方仓库的镜像都存储到国内了)，才能顺利完成镜像下载。配置方法如下：
 
-在/etc/docker/目录下创建一个名为daemon.json的文件并写入(daemon.json)[/docker/scripts/daemon.json]内容。
+在/etc/docker/目录下创建一个名为daemon.json的文件并写入[daemon.json](scripts/daemon.json)内容。
 
 执行systemctl daemon-reload命令让加速器生效，然后重启docker。
 
@@ -130,14 +130,31 @@ http://虚拟机IP:8008
 
 业务相关的动态数据存放在mysql数据库中；静态文件（如图片、主题、模块、配置文件等）存放在prestashop中。
 
-查看动态数据，首先要进入prestashop-mysql容器，然后进入mysql数据库，再用mysql数据库查看、更新、修改、删除等命令操作。具体方法不详细记录，可查看(SQL examples.md)[/linux/mysql/SQL examples.md]部分的内容。
+查看动态数据，首先要进入prestashop-mysql容器，然后进入mysql数据库，再用mysql数据库查看、更新、修改、删除等命令操作。具体方法不详细记录，可查看[SQL examples.md](mysql/SQL examples.md)部分的内容。
 
 ⚠️在修改和删除数据库的信息前，一定要先备份保存，避免操作失误造成大的损失。
 
+四、错误记录
 
+1.配置daemon.json文件后仍无法下载mysql镜像
 
+已经配置daemon.json文件并重启docker，仍然无法下载镜像，提示如下错误：docker: Error response from daemon: failed to resolve reference "docker.io/library/busybox:latest": failed to do request……
 
+原因：
+  
+错误提示中的网关地址的主要职责是转发流量，而不是域名解析，而docker daemon是一个独立的后台进程，有自己的命名空间，在一些特殊情况下它读取的DNS配置和系统不同，现有网关地址对docker内部的请求不稳定，导致docker解析镜像仓库域名时失败。
 
+解决方法：把现有的DNS网址永久替换成8.8.8.8和114.114.114.114。
+  
+8.8.8.8是Google公共DNS，全球使用最广泛的DNS之一；114.114.114.114由国内运营商提供，也较稳定。
+
+- nmcli device status   #检查确认网卡名称
+- nmcli con mod ens120 ipv4.dns "8.8.8.8 114.114.114.114"
+- nmcli con mod ens120 ipv4.ignore-auto-dns yes   #修改原有网关地址，设置永久DNS
+- nmcli con up ens120   #重新激活网络连接
+- cat /etc/resolv.conf  #验证内容是否修改成功
+
+修改完成后，再次下载mysql镜像，下载成功。
 
 
 
