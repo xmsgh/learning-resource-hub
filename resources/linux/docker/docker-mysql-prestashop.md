@@ -130,7 +130,7 @@ http://虚拟机IP:8008
 
 业务相关的动态数据存放在mysql数据库中；静态文件（如图片、主题、模块、配置文件等）存放在prestashop中。
 
-查看动态数据，首先要进入prestashop-mysql容器，然后进入mysql数据库，再用mysql数据库查看、更新、修改、删除等命令操作。具体方法不详细记录，可查看[SQL_examples.md](mysql/SQL_examples.md)部分的内容。
+查看动态数据，首先要进入prestashop-mysql容器，然后进入mysql数据库，再用mysql数据库查看、更新、修改、删除等命令操作。具体方法不详细记录，可查看[SQL_examples.md](/resources/linux/mysql/SQL_examples.md)部分的内容。
 
 ⚠️在修改和删除数据库的信息前，一定要先备份保存，避免操作失误造成大的损失。
 
