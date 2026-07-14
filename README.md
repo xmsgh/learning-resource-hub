@@ -14,12 +14,8 @@ I use this space to collect:
 ## Learning Directions
 
 - [Linux](resources/linux.md)
-- [Networking](resources/networking.md)
-- [Python](resources/python.md)
-- [AWS](resoueces/aws.md)
-- [Infrastructure](resources/infrastructure.md)
 - Shell
-- Automation
+
 
 ---
 
