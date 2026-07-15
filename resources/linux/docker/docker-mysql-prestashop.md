@@ -39,7 +39,7 @@ apt install -y docker-ce
 - docker images
 
 3.删除镜像
-- docker rm 镜像名
+- docker rmi 镜像名
 
 4.启动容器
 - docker run 镜像名
